@@ -20,10 +20,15 @@ async function main() {
     // lista personagens
     const lista = ['Rick Sanchez', 'Morty Smith', 'Summer Smith']
 
+    const db = client.db(dbName)
+    const collection = db.collection('items')
 
     //read all get /item
-    app.get('/item', function (req, res) {
-        res.send(lista)
+    app.get('/item', async function (req, res) {
+        //realizamos a operação de find na coleection do mongodb
+      const items = await collection.find().toArray()
+      //envio todos documentos como resposta http
+        res.send(items)
     })
 
     //read by id
