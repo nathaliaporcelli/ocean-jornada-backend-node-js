@@ -1,7 +1,7 @@
 const express = require('express')
 const dbUrl = 'mongodb+srv://admin:gdlMhyeNRuPWW8eZ@cluster0.ifsmzso.mongodb.net'
 const dbName = 'OceanJornadaBackend'
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 
 async function main() {
     const client = new MongoClient(dbUrl)
@@ -37,19 +37,36 @@ async function main() {
         const id = req.params.id
         res.send(id)
     })
-    // post
 
-    app.use(express.json())
+     // Read By ID -> [GET] /item/:id
+  app.get('/item/:id', async function (req, res) {
+    // Acesso o ID no parâmetro de rota
+    const id = req.params.id
 
-    app.post('/item', function (req, res) {
-        const body = req.body
-
-        const item = body.nome
-
-        lista.push(item)
-
-        res.send('Item adicionado com sucesso')
+    // Acesso o item na collection baseado no ID recebido
+    const item = await collection.findOne({
+      _id: new ObjectId(id)
     })
+
+    // Envio o item obtido como resposta HTTP
+    res.send(item)
+  })
+
+  // Sinalizamos que o corpo da requisição está em JSON
+  app.use(express.json())
+
+  // Create -> [POST] /item
+  app.post('/item', async function (req, res) {
+    // Extraímos o corpo da requisição
+    const item = req.body
+
+    // Colocamos o item dentro da collection de itens
+    await collection.insertOne(item)
+
+    // Enviamos uma resposta de sucesso
+    res.send(item)
+  })
+
     app.listen(3000)
 }
 main()
