@@ -67,6 +67,30 @@ async function main() {
     res.send(item)
   })
 
+  //update put /item/id:id
+  app.put('/item/:id',async function (req,res){
+    const id = req.params.id
+    //pegamos o novo item do corpo da requisição
+    const novoItem = req.body
+
+    //atualizar no banco de dados
+    await collection.updateOne(
+        {_id: new ObjectId(id)},
+        {$set:novoItem}
+    )
+    res.send('Item atualizado com sucesso!')
+  })
+
+  //delete [delete]/item/:id
+  app.delete('/item/:id', async function(req,res){
+    const id = req.params.id
+    //realizando operação de delete
+    await collection.deleteOne({_id:new ObjectId(id)})
+    //mensagem de sucesso
+    res.send('Item removido com sucesso')
+
+  })
+
     app.listen(3000)
 }
 main()
